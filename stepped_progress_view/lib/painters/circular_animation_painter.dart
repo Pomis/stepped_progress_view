@@ -8,17 +8,25 @@ class CircularAnimationPainter extends CustomPainter {
   final double startAngle;
   final Color color;
 
-  /// Animation value in range of 0 to 1
+  /// Animation value in range of 0 to 1. Corresponds to [spins] amount.
   final double value;
   final double maxSweepAngle;
-  final List<double> animationPattern;
+  final double minSweepAngle;
+  final double expandAt;
+  final int spins;
+  final double strokeWidth;
+  final bool reverse;
 
   CircularAnimationPainter({
     required this.startAngle,
     required this.color,
     required this.value,
-    this.maxSweepAngle = pi,
-    this.animationPattern = const [0.1, 0.1, 0.1, 1, 0.1, 1, 0.1],
+    this.expandAt = 0.5,
+    this.maxSweepAngle = pi / 2,
+    this.minSweepAngle = pi / 10,
+    this.strokeWidth = 2,
+    this.spins = 2,
+    this.reverse = false,
   });
 
   @override
@@ -27,13 +35,11 @@ class CircularAnimationPainter extends CustomPainter {
       ..color = color
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
+      ..strokeWidth = strokeWidth;
 
     canvas.drawArc(
       Rect.fromLTRB(0, 0, size.width, size.height),
-      _calculateOffsetAngle(),
-      // 0.5,
-      // 10,
+      reverse ? 2 * pi - _calculateOffsetAngle() : _calculateOffsetAngle(),
       _calculateSweepAngle(),
       false,
       paint,
@@ -41,17 +47,18 @@ class CircularAnimationPainter extends CustomPainter {
   }
 
   double _calculateSweepAngle() {
-    final lengthValue = value * (animationPattern.length - 1);
-    final lowerValue = animationPattern[lengthValue.toInt()];
-    final upperValue = animationPattern[lengthValue.ceil().toInt()];
-    final lowK = lengthValue - lowerValue;
-    final upK = 1 - lowK;
-    final extrapolatedValue = lowerValue * lowK + upperValue * upK;
-    return maxSweepAngle * extrapolatedValue;
+    if (value < expandAt) {
+      return minSweepAngle;
+    } else {
+      final radians = pi * (value - expandAt) * (1 / expandAt);
+      final y = sin(radians);
+      return minSweepAngle + y * maxSweepAngle;
+    }
   }
 
   double _calculateOffsetAngle() {
-    return 2 * pi * value;
+    return spins * 2 * pi * value -
+        (_calculateSweepAngle() * (reverse ? -1 : 1) / 2);
   }
 
   @override
