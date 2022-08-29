@@ -24,15 +24,15 @@ class AnimatedArc extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomPaint(
       painter: CircularAnimationPainter(
-        color: Color.fromARGB(98, 255, 2, 150),
-        startAngle: 1,
-        strokeWidth: 7,
-        reverse: true,
+        color: color,
+        startAngle: startAngle,
+        strokeWidth: strokeWidth,
+        reverse: reverse,
         value: value,
       ),
-      child: const SizedBox(
-        height: 110,
-        width: 110,
+      child: SizedBox(
+        height: size,
+        width: size,
       ),
     );
   }

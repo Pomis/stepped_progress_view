@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:stepped_progress_view/painters/circular_animation_painter.dart';
 
 import 'widgets/animated_arc.dart';
+import 'widgets/percentage_loading.dart';
 
 class SteppedProgressView extends StatefulWidget {
   final double value;
@@ -43,7 +44,7 @@ class _SteppedProgressViewState extends State<SteppedProgressView>
           _controller!.forward();
         }
       });
-
+    _controller!.forward();
   }
 
   @override
@@ -55,8 +56,6 @@ class _SteppedProgressViewState extends State<SteppedProgressView>
   }
 
   Widget _undefinedLoading() {
-    _controller?.forward();
-
     return Container(
       color: Color.fromARGB(22, 188, 62, 188),
       height: 200,
@@ -100,8 +99,9 @@ class _SteppedProgressViewState extends State<SteppedProgressView>
   }
 
   Widget _percentageLoading() {
-    _controller?.stop();
-
-    
+    return PercentageLoading(
+      percentage: widget.value,
+      startValue: _animation!.value,
+    );
   }
 }

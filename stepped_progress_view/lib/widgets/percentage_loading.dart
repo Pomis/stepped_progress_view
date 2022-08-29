@@ -1,11 +1,15 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import '../painters/circular_animation_painter.dart';
 
 class PercentageLoading extends StatefulWidget {
-  final double startValue; 
-  
-  const PercentageLoading({Key? key, this.startValue = 0}) : super(key: key);
+  final double startValue;
+  final double percentage;
+
+  const PercentageLoading({Key? key, this.startValue = 0, this.percentage = 0})
+      : super(key: key);
 
   @override
   State<PercentageLoading> createState() => _PercentageLoadingState();
@@ -15,17 +19,20 @@ class _PercentageLoadingState extends State<PercentageLoading>
     with SingleTickerProviderStateMixin {
   AnimationController? _controller;
   Animation<double>? _animation;
-  Tween<double> _rotationTween = Tween(begin: 0, end: 1);
+  Tween<double>? _rotationTween;
+  double? startValue;
 
   @override
   void initState() {
     super.initState();
+    startValue = widget.startValue;
+    _rotationTween = Tween(begin: startValue, end: 1);
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 10),
     );
 
-    _animation = _rotationTween.animate(_controller!)
+    _animation = _rotationTween!.animate(_controller!)
       ..addListener(() {
         setState(() {});
       })
@@ -36,6 +43,7 @@ class _PercentageLoadingState extends State<PercentageLoading>
           _controller!.forward();
         }
       });
+    _controller!.forward();
   }
 
   @override
@@ -49,7 +57,7 @@ class _PercentageLoadingState extends State<PercentageLoading>
             startAngle: 1,
             strokeWidth: 7,
             value: _animation!.value,
-            sweepAngle: widget.value * 2 * pi,
+            sweepAngle: widget.percentage * 2 * pi,
           ),
           child: const SizedBox(
             height: 200,
@@ -57,7 +65,7 @@ class _PercentageLoadingState extends State<PercentageLoading>
           ),
         ),
         Text(
-          '${(widget.value * 100).toInt()}%',
+          '${(widget.percentage * 100).toInt()}%',
           style: TextStyle(color: Color(0xFFFFFFFF)),
         ),
       ],
