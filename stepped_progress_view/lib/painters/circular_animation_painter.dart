@@ -10,6 +10,9 @@ class CircularAnimationPainter extends CustomPainter {
 
   /// Animation value in range of 0 to 1. Corresponds to [spins] amount.
   final double value;
+
+  /// In case you want to override sweep angle
+  final double? sweepAngle;
   final double maxSweepAngle;
   final double minSweepAngle;
   final double expandAt;
@@ -26,6 +29,7 @@ class CircularAnimationPainter extends CustomPainter {
     this.minSweepAngle = pi / 10,
     this.strokeWidth = 2,
     this.spins = 2,
+    this.sweepAngle,
     this.reverse = false,
   });
 
@@ -47,6 +51,9 @@ class CircularAnimationPainter extends CustomPainter {
   }
 
   double _calculateSweepAngle() {
+    if (sweepAngle != null) {
+      return sweepAngle!;
+    }
     if (value < expandAt) {
       return minSweepAngle;
     } else {

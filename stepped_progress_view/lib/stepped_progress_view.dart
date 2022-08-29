@@ -5,8 +5,14 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:stepped_progress_view/painters/circular_animation_painter.dart';
 
+import 'widgets/animated_arc.dart';
+
 class SteppedProgressView extends StatefulWidget {
-  const SteppedProgressView({Key? key}) : super(key: key);
+  final double value;
+  const SteppedProgressView({
+    this.value = 0,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<SteppedProgressView> createState() => _SteppedProgressViewState();
@@ -38,11 +44,19 @@ class _SteppedProgressViewState extends State<SteppedProgressView>
         }
       });
 
-    _controller!.forward();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (widget.value == 0) {
+      return _undefinedLoading();
+    }
+    return _percentageLoading();
+  }
+
+  Widget _undefinedLoading() {
+    _controller?.forward();
+
     return Container(
       color: Color.fromARGB(22, 188, 62, 188),
       height: 200,
@@ -50,57 +64,44 @@ class _SteppedProgressViewState extends State<SteppedProgressView>
       child: Stack(
         alignment: Alignment.center,
         children: [
-          CustomPaint(
-            painter: CircularAnimationPainter(
-              color: Color.fromARGB(100, 80, 57, 16),
-              startAngle: 1,
-              value: _animation!.value,
-              strokeWidth: 5,
-            ),
-            child: const SizedBox(
-              height: 200,
-              width: 200,
-            ),
+          AnimatedArc(
+            color: Color.fromARGB(100, 80, 57, 16),
+            startAngle: 1,
+            value: _animation!.value,
+            strokeWidth: 7,
+            size: 200,
           ),
-          CustomPaint(
-            painter: CircularAnimationPainter(
-              color: Color.fromARGB(100, 200, 7, 16),
-              startAngle: pi / 4,
-              value: _animation!.value,
-            ),
-            child: const SizedBox(
-              height: 180,
-              width: 180,
-            ),
+          AnimatedArc(
+            color: Color.fromARGB(100, 200, 7, 16),
+            startAngle: pi / 4,
+            value: _animation!.value,
+            size: 180,
+            strokeWidth: 2,
           ),
-          CustomPaint(
-            painter: CircularAnimationPainter(
-              color: Color.fromARGB(99, 1, 255, 102),
-              startAngle: 1,
-              strokeWidth: 4,
-              reverse: true,
-              value: _animation!.value,
-            ),
-            child: const SizedBox(
-              height: 130,
-              width: 130,
-            ),
+          AnimatedArc(
+            color: Color.fromARGB(99, 1, 255, 102),
+            startAngle: 1,
+            strokeWidth: 4,
+            reverse: true,
+            value: _animation!.value,
+            size: 130,
           ),
-                    CustomPaint(
-            painter: CircularAnimationPainter(
-              color: Color.fromARGB(98, 255, 2, 150),
-              startAngle: 1,
-              strokeWidth: 7,
-              reverse: true,
-              value: _animation!.value,
-            ),
-            child: const SizedBox(
-              height: 110,
-              width: 110,
-            ),
+          AnimatedArc(
+            color: Color.fromARGB(98, 255, 2, 150),
+            startAngle: 1,
+            strokeWidth: 7,
+            reverse: true,
+            value: _animation!.value,
+            size: 110,
           ),
         ],
       ),
     );
+  }
+
+  Widget _percentageLoading() {
+    _controller?.stop();
+
+    
   }
 }
