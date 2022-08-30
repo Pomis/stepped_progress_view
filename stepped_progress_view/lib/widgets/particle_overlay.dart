@@ -78,24 +78,39 @@ class _ParticleOverlayState extends State<ParticleOverlay>
 
   Iterable<Particle> _generateParticles() sync* {
     for (var i = 0; i < widget.particlesCount - 1; i++) {
+      final particleTypeRandom = _random.nextDouble();
       yield Particle(
-          velocityVector: Offset(
-              _random.nextDouble() * widget.particlesBaseVelocity -
-                  widget.particlesBaseVelocity / 2,
-              _random.nextDouble() * widget.particlesBaseVelocity -
-                  widget.particlesBaseVelocity / 2),
-          paint: Paint()
-            ..style = PaintingStyle.fill
-            ..strokeWidth = 2
-            ..color = widget.colors[_random.nextInt(widget.colors.length - 1)],
-          path: Path()
-            ..addRect(
-              Rect.fromCenter(
-                center: Offset.zero,
-                width: _random.nextDouble() * 15,
-                height: _random.nextDouble() * 15,
-              ),
-            ));
+        initialRotation: _random.nextDouble() * pi,
+        velocityVector: Offset(
+            _random.nextDouble() * widget.particlesBaseVelocity -
+                widget.particlesBaseVelocity / 2,
+            _random.nextDouble() * widget.particlesBaseVelocity -
+                widget.particlesBaseVelocity / 2),
+        paint: Paint()
+          ..style = particleTypeRandom > 0.5
+              ? PaintingStyle.stroke
+              : PaintingStyle.fill
+          ..strokeWidth = 2
+          ..color = widget.colors[_random.nextInt(widget.colors.length - 1)],
+        path: particleTypeRandom > 0.5 ? _getCurvedPath() : _getRectPath(),
+      );
     }
+  }
+
+  Path _getCurvedPath() {
+    return Path()
+      ..quadraticBezierTo(20, 5, 10, 10)
+      ..quadraticBezierTo(0, 5, 20, 0);
+  }
+
+  Path _getRectPath() {
+    return Path()
+      ..addRect(
+        Rect.fromCenter(
+          center: Offset.zero,
+          width: _random.nextDouble() * 15,
+          height: _random.nextDouble() * 15,
+        ),
+      );
   }
 }
