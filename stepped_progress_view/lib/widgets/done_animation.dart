@@ -3,20 +3,24 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:stepped_progress_view/widgets/particle_overlay.dart';
 
+import '../models/animated_arc.dart';
 import '../painters/circular_animation_painter.dart';
-import '../painters/particles_painter.dart';
 
 class DoneAnimation extends StatefulWidget {
   final double startValue;
   final double percentage;
   final int durationSeconds;
+  final List<AnimatedArc> arcs;
+  final TextStyle textStyle;
 
-  const DoneAnimation(
-      {Key? key,
-      this.startValue = 0,
-      this.percentage = 0,
-      this.durationSeconds = 10})
-      : super(key: key);
+  const DoneAnimation({
+    Key? key,
+    this.startValue = 0,
+    this.percentage = 0,
+    required this.arcs,
+    required this.textStyle,
+    this.durationSeconds = 10,
+  }) : super(key: key);
 
   @override
   State<DoneAnimation> createState() => _DoneAnimationState();
@@ -34,7 +38,7 @@ class _DoneAnimationState extends State<DoneAnimation>
     _scaleTween = Tween(begin: 0, end: widget.durationSeconds.toDouble());
     _scaleController = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
     );
 
     _scaleAnimation = _scaleTween!.animate(_scaleController!)
@@ -56,23 +60,23 @@ class _DoneAnimationState extends State<DoneAnimation>
       children: [
         CustomPaint(
           painter: CircularAnimationPainter(
-            color: Color.fromARGB(100, 80, 57, 16),
-            startAngle: 1,
-            strokeWidth: 7,
+            color: widget.arcs.first.color,
+            startAngle: widget.arcs.first.startAngle,
+            strokeWidth: widget.arcs.first.strokeWidth,
             value: 0,
             sweepAngle: 2 * pi,
           ),
-          child: const SizedBox(
-            height: 200,
-            width: 200,
+          child: SizedBox(
+            height: widget.arcs.first.size,
+            width: widget.arcs.first.size,
           ),
         ),
         RepaintBoundary(
           child: Transform.scale(
             scale: min(_scaleAnimation!.value, 1),
-            child: const Text(
-              'Done',
-              style: TextStyle(color: Color(0xFFFFFFFF)),
+            child: Text(
+              'All done',
+              style: widget.textStyle,
             ),
           ),
         ),
@@ -89,30 +93,21 @@ class _DoneAnimationState extends State<DoneAnimation>
           tween: Tween(begin: 1, end: 0),
           builder: (_, value, __) {
             return Opacity(
-              key: Key('particle_overlay'),
+              key: const Key('particle_overlay'),
               opacity: value,
               child: ParticleOverlay(
                 durationSeconds: 5,
-                colors: [
-                  Colors.deepOrangeAccent,
-                  Colors.deepPurpleAccent,
-                  Colors.lime,
-                ],
+                colors: widget.arcs.map((e) => e.color).toList(),
               ),
             );
           },
-          duration: Duration(seconds: 5),
+          duration: const Duration(seconds: 5),
         );
       },
     );
     _scaleController!.addListener(() {
       overlayState!.setState(() {});
     });
-    // inserting overlay entry
     overlayState!.insert(overlayEntry);
-    // _scaleController!.forward();
-    // await Future.delayed(const Duration(seconds: 3))
-    //     .whenComplete(() => _scaleController!.reverse())
-    //     .whenComplete(() => overlayEntry.remove());
   }
 }

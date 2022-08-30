@@ -35,7 +35,7 @@ class _ParticleOverlayState extends State<ParticleOverlay>
   @override
   void initState() {
     super.initState();
-    _tween = Tween(begin: 0, end: 6);
+    _tween = Tween(begin: 0.3, end: 6);
     _controller = AnimationController(
       vsync: this,
       duration: Duration(seconds: widget.durationSeconds),
@@ -78,7 +78,7 @@ class _ParticleOverlayState extends State<ParticleOverlay>
 
   Iterable<Particle> _generateParticles() sync* {
     for (var i = 0; i < widget.particlesCount - 1; i++) {
-      final particleTypeRandom = _random.nextDouble();
+      final showCurvedParticle = _random.nextDouble() > 0.7;
       yield Particle(
         initialRotation: _random.nextDouble() * pi,
         velocityVector: Offset(
@@ -87,20 +87,20 @@ class _ParticleOverlayState extends State<ParticleOverlay>
             _random.nextDouble() * widget.particlesBaseVelocity -
                 widget.particlesBaseVelocity / 2),
         paint: Paint()
-          ..style = particleTypeRandom > 0.5
+          ..style = showCurvedParticle
               ? PaintingStyle.stroke
               : PaintingStyle.fill
           ..strokeWidth = 2
           ..color = widget.colors[_random.nextInt(widget.colors.length - 1)],
-        path: particleTypeRandom > 0.5 ? _getCurvedPath() : _getRectPath(),
+        path: showCurvedParticle ? _getCurvedPath() : _getRectPath(),
       );
     }
   }
 
   Path _getCurvedPath() {
     return Path()
-      ..quadraticBezierTo(20, 5, 10, 10)
-      ..quadraticBezierTo(0, 5, 20, 0);
+      ..quadraticBezierTo(30, 5, 15, 10)
+      ..quadraticBezierTo(0, 5, 30, 0);
   }
 
   Path _getRectPath() {
@@ -108,8 +108,8 @@ class _ParticleOverlayState extends State<ParticleOverlay>
       ..addRect(
         Rect.fromCenter(
           center: Offset.zero,
-          width: _random.nextDouble() * 15,
-          height: _random.nextDouble() * 15,
+          width: _random.nextDouble() * 25,
+          height: _random.nextDouble() * 25,
         ),
       );
   }

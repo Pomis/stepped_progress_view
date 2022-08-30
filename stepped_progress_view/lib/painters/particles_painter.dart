@@ -9,18 +9,15 @@ class ParticlesPainter extends CustomPainter {
   final List<Particle> particles;
   final List<Color> colors;
   final int particlesMargin;
-  final double hideAt;
 
   ParticlesPainter({
     required this.value,
     required this.particles,
     this.particlesMargin = 5,
-    this.hideAt = 0.9,
     required this.colors,
   });
 
   static const _gravity = 30;
-  static const _baseVelocity = 30;
 
   @override
   void paint(Canvas canvas, Size size) {

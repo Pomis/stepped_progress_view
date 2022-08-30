@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:stepped_progress_view/stepped_progress_view.dart';
 
@@ -52,33 +54,27 @@ class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   AnimationController? _controller;
   Animation<double>? _animation;
-  Tween<double> _tween = Tween(begin: 0, end: 1);
+  final Tween<double> _tween = Tween(begin: 0, end: 1);
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 2),
+      duration: const Duration(seconds: 5),
     );
 
     _animation = _tween.animate(_controller!)
       ..addListener(() {
         setState(() {});
       });
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 3), () {
       _controller!.forward();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       backgroundColor: const Color(0xFF0d0f26),
       appBar: AppBar(
@@ -89,7 +85,39 @@ class _MyHomePageState extends State<MyHomePage>
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             SteppedProgressView(
+              textStyle: const TextStyle(
+                color: Colors.white,
+                fontSize: 23,
+                fontFamily: 'Montserrat',
+                fontWeight: FontWeight.w700,
+              ),
               value: _animation!.value,
+              arcs: [
+                AnimatedArc(
+                  color: const Color(0xFFfad080),
+                  strokeWidth: 10,
+                  size: 200,
+                ),
+                AnimatedArc(
+                  color: const Color(0xFF383a56),
+                  startAngle: pi,
+                  size: 180,
+                  reverse: true,
+                  strokeWidth: 2,
+                ),
+                AnimatedArc(
+                  color: const Color(0xFF5d5f77),
+                  strokeWidth: 6,
+                  size: 130,
+                ),
+                AnimatedArc(
+                  color: const Color(0xFFa4a4c4),
+                  startAngle: 1,
+                  strokeWidth: 7,
+                  reverse: true,
+                  size: 110,
+                ),
+              ],
             ),
           ],
         ),

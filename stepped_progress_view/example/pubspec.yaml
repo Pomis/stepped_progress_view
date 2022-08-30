@@ -1,8 +1,6 @@
 name: example
 description: A new Flutter project.
 
-# The following line prevents the package from being accidentally published to
-# pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
@@ -55,3 +53,12 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  fonts:
+    - family: Montserrat
+      fonts:
+        - asset: assets/Montserrat-SemiBold.ttf
+          weight: 700
+
+
+assets:
+  - assets/

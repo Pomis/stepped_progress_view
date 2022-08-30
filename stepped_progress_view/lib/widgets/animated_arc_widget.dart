@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:stepped_progress_view/stepped_progress_view.dart';
 
 import '../painters/circular_animation_painter.dart';
 
-class AnimatedArc extends StatelessWidget {
+class AnimatedArcWidget extends StatelessWidget {
   final Color color;
   final double size;
   final double startAngle;
@@ -10,7 +11,7 @@ class AnimatedArc extends StatelessWidget {
   final double strokeWidth;
   final double value;
 
-  const AnimatedArc({
+  const AnimatedArcWidget({
     Key? key,
     required this.color,
     required this.size,
@@ -19,6 +20,17 @@ class AnimatedArc extends StatelessWidget {
     required this.strokeWidth,
     required this.value,
   }) : super(key: key);
+
+  factory AnimatedArcWidget.fromModel(AnimatedArc model, double value) {
+    return AnimatedArcWidget(
+      value: value,
+      color: model.color,
+      size: model.size,
+      startAngle: model.startAngle,
+      strokeWidth: model.strokeWidth,
+      reverse: model.reverse,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
