@@ -64,7 +64,7 @@ class CircularAnimationPainter extends CustomPainter {
   }
 
   double _calculateOffsetAngle() {
-    return spins * 2 * pi * value -
+    return startAngle + spins * 2 * pi * value -
         (_calculateSweepAngle() * (reverse ? -1 : 1) / 2);
   }
 

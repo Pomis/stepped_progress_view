@@ -25,27 +25,27 @@ class ParticleOverlay extends StatefulWidget {
 
 class _ParticleOverlayState extends State<ParticleOverlay>
     with SingleTickerProviderStateMixin {
-  AnimationController? _controller;
-  Animation<double>? _animation;
-  Tween<double>? _tween;
-  double? startValue;
-  List<Particle>? _particles;
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
+  late final Tween<double> _tween;
+  late final double startValue;
+  late final List<Particle> _particles;
   final _random = Random();
 
   @override
   void initState() {
     super.initState();
-    _tween = Tween(begin: 0.3, end: 6);
+    _tween = Tween(begin: 0.6, end: 6);
     _controller = AnimationController(
       vsync: this,
       duration: Duration(seconds: widget.durationSeconds),
     );
 
-    _animation = _tween!.animate(_controller!)
+    _animation = _tween.animate(_controller)
       ..addListener(() {
         setState(() {});
       });
-    _controller!.forward();
+    _controller.forward();
 
     _particles = _generateParticles().toList();
   }
@@ -60,14 +60,11 @@ class _ParticleOverlayState extends State<ParticleOverlay>
           child: SizedBox(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
-            child: Opacity(
-              opacity: min(1, 6 - _animation!.value),
-              child: CustomPaint(
-                painter: ParticlesPainter(
-                  colors: [],
-                  particles: _particles!,
-                  value: _animation!.value,
-                ),
+            child: CustomPaint(
+              painter: ParticlesPainter(
+                colors: [],
+                particles: _particles,
+                value: _animation.value,
               ),
             ),
           ),

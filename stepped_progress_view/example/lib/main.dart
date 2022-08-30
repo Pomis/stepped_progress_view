@@ -112,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage>
                 ),
                 AnimatedArc(
                   color: const Color(0xFFa4a4c4),
-                  startAngle: 1,
+                  startAngle: pi,
                   strokeWidth: 7,
                   reverse: true,
                   size: 110,
