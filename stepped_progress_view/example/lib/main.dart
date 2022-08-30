@@ -59,21 +59,14 @@ class _MyHomePageState extends State<MyHomePage>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 10),
+      duration: Duration(seconds: 2),
     );
 
     _animation = _tween.animate(_controller!)
       ..addListener(() {
         setState(() {});
-      })
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          _controller!.repeat();
-        } else if (status == AnimationStatus.dismissed) {
-          _controller!.forward();
-        }
       });
-    Future.delayed(Duration(seconds: 5), () {
+    Future.delayed(Duration(seconds: 1), () {
       _controller!.forward();
     });
   }

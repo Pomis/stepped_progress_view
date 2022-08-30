@@ -71,4 +71,10 @@ class _PercentageLoadingState extends State<PercentageLoading>
       ],
     );
   }
+
+  @override
+  dispose() {
+    _controller!.dispose();
+    super.dispose();
+  }
 }

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:stepped_progress_view/painters/circular_animation_painter.dart';
 
 import 'widgets/animated_arc.dart';
+import 'widgets/done_animation.dart';
 import 'widgets/percentage_loading.dart';
 
 class SteppedProgressView extends StatefulWidget {
@@ -23,7 +24,8 @@ class _SteppedProgressViewState extends State<SteppedProgressView>
     with SingleTickerProviderStateMixin {
   AnimationController? _controller;
   Animation<double>? _animation;
-  Tween<double> _rotationTween = Tween(begin: 0, end: 1);
+  final Tween<double> _rotationTween = Tween(begin: 0, end: 1);
+  bool _overlayShown = false;
 
   @override
   void initState() {
@@ -51,6 +53,9 @@ class _SteppedProgressViewState extends State<SteppedProgressView>
   Widget build(BuildContext context) {
     if (widget.value == 0) {
       return _undefinedLoading();
+    }
+    if (widget.value >= 1) {
+      return const DoneAnimation();
     }
     return _percentageLoading();
   }
