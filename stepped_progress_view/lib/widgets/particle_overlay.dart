@@ -1,9 +1,23 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:stepped_progress_view/models/particle.dart';
 
 import '../painters/particles_painter.dart';
 
 class ParticleOverlay extends StatefulWidget {
-  const ParticleOverlay({Key? key}) : super(key: key);
+  final int particlesCount;
+  final List<Color> colors;
+  final int durationSeconds;
+  final double particlesBaseVelocity;
+
+  const ParticleOverlay({
+    Key? key,
+    this.particlesCount = 60,
+    this.durationSeconds = 10,
+    this.particlesBaseVelocity = 400,
+    required this.colors,
+  }) : super(key: key);
 
   @override
   State<ParticleOverlay> createState() => _ParticleOverlayState();
@@ -15,14 +29,16 @@ class _ParticleOverlayState extends State<ParticleOverlay>
   Animation<double>? _animation;
   Tween<double>? _tween;
   double? startValue;
+  List<Particle>? _particles;
+  final _random = Random();
 
   @override
   void initState() {
     super.initState();
-    _tween = Tween(begin: 0, end: 1);
+    _tween = Tween(begin: 0, end: 6);
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 5),
+      duration: Duration(seconds: widget.durationSeconds),
     );
 
     _animation = _tween!.animate(_controller!)
@@ -30,6 +46,8 @@ class _ParticleOverlayState extends State<ParticleOverlay>
         setState(() {});
       });
     _controller!.forward();
+
+    _particles = _generateParticles().toList();
   }
 
   @override
@@ -42,16 +60,42 @@ class _ParticleOverlayState extends State<ParticleOverlay>
           child: SizedBox(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
-            child: CustomPaint(
-              painter: ParticlesPainter(
-                colors: [],
-                particlesCount: 30,
-                value: _animation!.value,
+            child: Opacity(
+              opacity: min(1, 6 - _animation!.value),
+              child: CustomPaint(
+                painter: ParticlesPainter(
+                  colors: [],
+                  particles: _particles!,
+                  value: _animation!.value,
+                ),
               ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  Iterable<Particle> _generateParticles() sync* {
+    for (var i = 0; i < widget.particlesCount - 1; i++) {
+      yield Particle(
+          velocityVector: Offset(
+              _random.nextDouble() * widget.particlesBaseVelocity -
+                  widget.particlesBaseVelocity / 2,
+              _random.nextDouble() * widget.particlesBaseVelocity -
+                  widget.particlesBaseVelocity / 2),
+          paint: Paint()
+            ..style = PaintingStyle.fill
+            ..strokeWidth = 2
+            ..color = widget.colors[_random.nextInt(widget.colors.length - 1)],
+          path: Path()
+            ..addRect(
+              Rect.fromCenter(
+                center: Offset.zero,
+                width: _random.nextDouble() * 15,
+                height: _random.nextDouble() * 15,
+              ),
+            ));
+    }
   }
 }

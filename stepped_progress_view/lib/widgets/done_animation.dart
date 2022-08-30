@@ -9,8 +9,13 @@ import '../painters/particles_painter.dart';
 class DoneAnimation extends StatefulWidget {
   final double startValue;
   final double percentage;
+  final int durationSeconds;
 
-  const DoneAnimation({Key? key, this.startValue = 0, this.percentage = 0})
+  const DoneAnimation(
+      {Key? key,
+      this.startValue = 0,
+      this.percentage = 0,
+      this.durationSeconds = 10})
       : super(key: key);
 
   @override
@@ -26,10 +31,10 @@ class _DoneAnimationState extends State<DoneAnimation>
   @override
   void initState() {
     super.initState();
-    _scaleTween = Tween(begin: 0.3, end: 1);
+    _scaleTween = Tween(begin: 0, end: widget.durationSeconds.toDouble());
     _scaleController = AnimationController(
       vsync: this,
-      duration: kThemeAnimationDuration * 10,
+      duration: Duration(seconds: 1),
     );
 
     _scaleAnimation = _scaleTween!.animate(_scaleController!)
@@ -39,7 +44,9 @@ class _DoneAnimationState extends State<DoneAnimation>
 
     _scaleController!.forward();
 
-    _showOverlay();
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      _showOverlay();
+    });
   }
 
   @override
@@ -60,11 +67,13 @@ class _DoneAnimationState extends State<DoneAnimation>
             width: 200,
           ),
         ),
-        Transform.scale(
-          scale: _scaleAnimation!.value,
-          child: const Text(
-            'Done',
-            style: TextStyle(color: Color(0xFFFFFFFF)),
+        RepaintBoundary(
+          child: Transform.scale(
+            scale: min(_scaleAnimation!.value, 1),
+            child: const Text(
+              'Done',
+              style: TextStyle(color: Color(0xFFFFFFFF)),
+            ),
           ),
         ),
       ],
@@ -76,9 +85,23 @@ class _DoneAnimationState extends State<DoneAnimation>
     final overlayEntry = OverlayEntry(
       maintainState: true,
       builder: (context) {
-        return FadeTransition(
-          opacity: _scaleAnimation!,
-          child: ParticleOverlay(),
+        return TweenAnimationBuilder<double>(
+          tween: Tween(begin: 1, end: 0),
+          builder: (_, value, __) {
+            return Opacity(
+              key: Key('particle_overlay'),
+              opacity: value,
+              child: ParticleOverlay(
+                durationSeconds: 5,
+                colors: [
+                  Colors.deepOrangeAccent,
+                  Colors.deepPurpleAccent,
+                  Colors.lime,
+                ],
+              ),
+            );
+          },
+          duration: Duration(seconds: 5),
         );
       },
     );
@@ -87,10 +110,9 @@ class _DoneAnimationState extends State<DoneAnimation>
     });
     // inserting overlay entry
     overlayState!.insert(overlayEntry);
-    _scaleController!.forward();
-    await Future.delayed(const Duration(seconds: 3))
-        .whenComplete(() => _scaleController!.reverse())
-        // removing overlay entry after stipulated time.
-        .whenComplete(() => overlayEntry.remove());
+    // _scaleController!.forward();
+    // await Future.delayed(const Duration(seconds: 3))
+    //     .whenComplete(() => _scaleController!.reverse())
+    //     .whenComplete(() => overlayEntry.remove());
   }
 }
