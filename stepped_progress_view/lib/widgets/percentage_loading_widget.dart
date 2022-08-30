@@ -35,10 +35,10 @@ class _PercentageLoadingWidgetState extends State<PercentageLoadingWidget>
   void initState() {
     super.initState();
     startValue = widget.startValue;
-    _tween = Tween(begin: startValue, end: 1);
+    _tween = Tween(begin: startValue, end: pi);
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 10),
+      duration: const Duration(seconds: 20),
     );
 
     _animation = _tween.animate(_controller)
